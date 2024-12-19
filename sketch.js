@@ -9,6 +9,7 @@ let boxes = [];
 let ground;
 let constraint;
 let constrainOptions;
+let squareSize = 30;
 
 let handPose;
 let video;
@@ -23,7 +24,7 @@ function preload() {
 }
 
 function setup() {
-  createCanvas(640, 480);
+  createCanvas(800, 600);
   // Create the webcam video and hide it
   video = createCapture(VIDEO);
   video.size(width, height);
@@ -41,7 +42,10 @@ function setup() {
   wallLeft = new Boundary(-50, height / 2, 100, height);
   wallRight = new Boundary(width + 50, height / 2, 100, height);
   World.add(world, [ground, wallLeft, wallRight]);
-  boxes.push(new Box(200, 200, 50, 50));
+  for (let i = 0; i < 10; i++) {
+    let xLocation = random(50, width - 50);
+    boxes.push(new Box(xLocation, 200, squareSize, squareSize));
+  }
   activeBox = boxes[0];
 }
 
@@ -104,7 +108,7 @@ function gotHands(results) {
 }
 
 function mousePressed() {
-  boxes.push(new Box(width - mouseX, mouseY, 50, 50));
+  boxes.push(new Box(width - mouseX, mouseY, squareSize, squareSize));
 }
 
 // Calculating the distance between two points
