@@ -15,6 +15,7 @@ let video;
 let hands = [];
 let pickUp = false;
 let released = false;
+let activeBox;
 
 function preload() {
   // Load the handPose model
@@ -41,6 +42,7 @@ function setup() {
   wallRight = new Boundary(width + 50, height / 2, 100, height);
   World.add(world, [ground, wallLeft, wallRight]);
   boxes.push(new Box(200, 200, 50, 50));
+  activeBox = boxes[0];
 }
 
 function draw() {
@@ -52,32 +54,24 @@ function draw() {
 
   // If there are hands detected
   if (hands.length > 0) {
-    console.log("distance between index_finger_tip and thumb_tip: " + calculateDistance(hands[0].index_finger_tip, hands[0].thumb_tip));
-    console.log("distance between index_finger_tip and box[0]: " + calculateDistance(hands[0].index_finger_tip, boxes[0].body.position));
-  }
-
-  if (hands.length > 0) {
-    if (calculateDistance(hands[0].index_finger_tip, hands[0].thumb_tip) < 25 && calculateDistance(hands[0].index_finger_tip, boxes[0].body.position) < 20) {
-      pickUp = true;
+    for (let i = 0; i < boxes.length; i++) {
+      if (calculateDistance(hands[0].index_finger_tip, boxes[i].body.position) < 20) {
+        activeBox = boxes[i];
+        if (calculateDistance(hands[0].index_finger_tip, hands[0].thumb_tip) < 25 && calculateDistance(hands[0].index_finger_tip, activeBox.body.position) < 20) {
+          pickUp = true;
+        }
+        break;
+      }
     }
   }
 
-  if (boxes[0].body.position.y > height || boxes[0].body.position.y < 0) {
-    Body.setStatic(boxes[0].body, false);
-    Body.setPosition(boxes[0].body, { x: 200, y: 200 });
-  } else if (boxes[0].body.position.x < 0 || boxes[0].body.position.x > width) {
-    Body.setStatic(boxes[0].body, false);
-    Body.setPosition(boxes[0].body, { x: 200, y: 200 });
-  }
-
   if (pickUp) {
-    Body.setStatic(boxes[0].body, true);
+    Body.setStatic(activeBox.body, true);
     if (hands.length > 0) {
-      Body.setPosition(boxes[0].body, { x: hands[0].index_finger_tip.x, y: hands[0].index_finger_tip.y }, true);
+      Body.setPosition(activeBox.body, { x: hands[0].index_finger_tip.x, y: hands[0].index_finger_tip.y }, true);
 
       if (calculateDistance(hands[0].index_finger_tip, hands[0].thumb_tip) > 25) {
-        Body.setStatic(boxes[0].body, false);
-        //Body.setVelocity(boxes[0].body, { x: 10, y: 10 });
+        Body.setStatic(activeBox.body, false);
         pickUp = false;
       }
     }
@@ -110,7 +104,7 @@ function gotHands(results) {
 }
 
 function mousePressed() {
-  boxes.push(new Box(mouseX, mouseY, random(10, 40), random(10, 40)));
+  boxes.push(new Box(width - mouseX, mouseY, 50, 50));
 }
 
 // Calculating the distance between two points
