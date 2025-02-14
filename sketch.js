@@ -24,7 +24,7 @@ function preload() {
 }
 
 function setup() {
-  createCanvas(1200, 900);
+  createCanvas(800, 600);
   // Create the webcam video and hide it
   video = createCapture(VIDEO);
   video.size(width, height);
