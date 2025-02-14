@@ -9,7 +9,7 @@ let boxes = [];
 let ground;
 let constraint;
 let constrainOptions;
-let squareSize = 30;
+let squareSize = 80;
 
 let handPose;
 let video;
@@ -24,7 +24,7 @@ function preload() {
 }
 
 function setup() {
-  createCanvas(800, 600);
+  createCanvas(1200, 900);
   // Create the webcam video and hide it
   video = createCapture(VIDEO);
   video.size(width, height);
